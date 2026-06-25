@@ -1,4 +1,4 @@
-import type { AgentDefinition } from "@/src/core/agent-types";
+import type { AgentDefinition } from "../core/agent-types";
 
 export const agentDefinitions: AgentDefinition[] = [
   {

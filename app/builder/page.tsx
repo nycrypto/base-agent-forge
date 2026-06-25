@@ -2,39 +2,97 @@
 
 import { useState } from "react";
 
-const agentOptions = [
+type AgentId = "wallet" | "research" | "x402" | "privacy";
+
+type AgentOption = {
+  id: AgentId;
+  name: string;
+  tagline: string;
+  starterPrompt: string;
+};
+
+type AgentApiResult = {
+  agentId: AgentId;
+  name: string;
+  summary: string;
+  response: string;
+  safetyNotes: string[];
+  nextSteps: string[];
+};
+
+const agentOptions: AgentOption[] = [
   {
     id: "wallet",
     name: "Base Wallet Agent",
     tagline: "Wallet safety and Base basics",
-    output:
-      "I can help you understand wallet safety, Base network basics, testnet usage, and transaction checklists. I will never ask for your seed phrase or private key."
+    starterPrompt: "Create a safe wallet checklist for a new Base user."
   },
   {
     id: "research",
     name: "Base Research Agent",
     tagline: "Base ecosystem research assistant",
-    output:
-      "I can help you explore Base ecosystem ideas, learning paths, builder opportunities, and safe project directions without exposing personal wallet activity."
+    starterPrompt: "Suggest safe Base builder ideas for a beginner."
   },
   {
     id: "x402",
     name: "x402 Agent",
     tagline: "Payment-ready agent flow",
-    output:
-      "I can explain how an AI agent may request access to a paid API or tool using an x402-style payment flow. Real payments are disabled in this starter version."
+    starterPrompt: "Explain a safe demo x402 payment flow for an AI agent."
   },
   {
     id: "privacy",
     name: "Privacy Guard Agent",
     tagline: "Prompt and metadata safety checker",
-    output:
-      "I can check prompts, payment descriptions, and agent metadata for possible private information before anything is sent to an external service."
+    starterPrompt: "Check this demo prompt for private data before running."
   }
 ];
 
 export default function BuilderPage() {
-  const [selectedAgent, setSelectedAgent] = useState(agentOptions[0]);
+  const [selectedAgent, setSelectedAgent] = useState<AgentOption>(agentOptions[0]);
+  const [prompt, setPrompt] = useState(agentOptions[0].starterPrompt);
+  const [result, setResult] = useState<AgentApiResult | null>(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function runDemoAgent() {
+    setIsLoading(true);
+    setError("");
+    setResult(null);
+
+    try {
+      const response = await fetch("/api/agent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          agentId: selectedAgent.id,
+          prompt,
+          paymentMode: "disabled"
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error ?? "The agent request failed.");
+        return;
+      }
+
+      setResult(data as AgentApiResult);
+    } catch {
+      setError("Could not connect to the hosted agent API.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function chooseAgent(agent: AgentOption) {
+    setSelectedAgent(agent);
+    setPrompt(agent.starterPrompt);
+    setResult(null);
+    setError("");
+  }
 
   return (
     <main
@@ -57,11 +115,7 @@ export default function BuilderPage() {
         ← Back to home
       </a>
 
-      <section
-        style={{
-          marginBottom: "36px"
-        }}
-      >
+      <section style={{ marginBottom: "36px" }}>
         <p
           style={{
             color: "#60a5fa",
@@ -81,7 +135,7 @@ export default function BuilderPage() {
             margin: "14px 0"
           }}
         >
-          Choose your Base agent.
+          Choose and run your Base agent.
         </h1>
 
         <p
@@ -89,27 +143,23 @@ export default function BuilderPage() {
             color: "#cbd5e1",
             fontSize: "1.05rem",
             lineHeight: 1.7,
-            maxWidth: "720px"
+            maxWidth: "760px"
           }}
         >
-          Start with a safe demo agent. This builder does not use real private
-          keys, wallet secrets, payment credentials, or personal data.
+          Select a safe demo agent, edit the prompt, and run it through the
+          Hosted Mode API. No real private keys, real wallet actions, or real
+          payments are used.
         </p>
       </section>
 
       <section
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
           gap: "18px"
         }}
       >
-        <div
-          style={{
-            display: "grid",
-            gap: "12px"
-          }}
-        >
+        <div style={{ display: "grid", gap: "12px" }}>
           {agentOptions.map((agent) => {
             const isSelected = selectedAgent.id === agent.id;
 
@@ -117,7 +167,7 @@ export default function BuilderPage() {
               <button
                 key={agent.id}
                 type="button"
-                onClick={() => setSelectedAgent(agent)}
+                onClick={() => chooseAgent(agent)}
                 style={{
                   textAlign: "left",
                   cursor: "pointer",
@@ -130,21 +180,11 @@ export default function BuilderPage() {
                   padding: "18px"
                 }}
               >
-                <strong
-                  style={{
-                    display: "block",
-                    marginBottom: "6px"
-                  }}
-                >
+                <strong style={{ display: "block", marginBottom: "6px" }}>
                   {agent.name}
                 </strong>
 
-                <span
-                  style={{
-                    color: "#94a3b8",
-                    lineHeight: 1.5
-                  }}
-                >
+                <span style={{ color: "#94a3b8", lineHeight: 1.5 }}>
                   {agent.tagline}
                 </span>
               </button>
@@ -160,13 +200,7 @@ export default function BuilderPage() {
             padding: "26px"
           }}
         >
-          <p
-            style={{
-              color: "#60a5fa",
-              fontWeight: 700,
-              marginTop: 0
-            }}
-          >
+          <p style={{ color: "#60a5fa", fontWeight: 700, marginTop: 0 }}>
             Selected Agent
           </p>
 
@@ -180,14 +214,53 @@ export default function BuilderPage() {
             {selectedAgent.name}
           </h2>
 
-          <p
+          <label
+            htmlFor="agent-prompt"
             style={{
-              color: "#cbd5e1",
-              lineHeight: 1.7
+              display: "block",
+              fontWeight: 700,
+              marginBottom: "10px"
             }}
           >
-            {selectedAgent.output}
-          </p>
+            Prompt
+          </label>
+
+          <textarea
+            id="agent-prompt"
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
+            rows={6}
+            style={{
+              width: "100%",
+              resize: "vertical",
+              border: "1px solid #1e3a5f",
+              borderRadius: "18px",
+              padding: "14px",
+              background: "rgba(2, 6, 23, 0.5)",
+              color: "#f8fafc",
+              outline: "none",
+              lineHeight: 1.6
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={runDemoAgent}
+            disabled={isLoading}
+            style={{
+              marginTop: "16px",
+              width: "100%",
+              border: "none",
+              borderRadius: "999px",
+              padding: "14px 18px",
+              background: isLoading ? "#1e3a5f" : "#3b82f6",
+              color: "white",
+              fontWeight: 800,
+              cursor: isLoading ? "not-allowed" : "pointer"
+            }}
+          >
+            {isLoading ? "Running agent..." : "Run Demo Agent"}
+          </button>
 
           <div
             style={{
@@ -212,6 +285,87 @@ export default function BuilderPage() {
           </div>
         </article>
       </section>
+
+      {error && (
+        <section
+          style={{
+            marginTop: "22px",
+            border: "1px solid #ef4444",
+            background: "rgba(239, 68, 68, 0.12)",
+            borderRadius: "20px",
+            padding: "18px"
+          }}
+        >
+          <strong>Error</strong>
+          <p style={{ color: "#fecaca", lineHeight: 1.6, marginBottom: 0 }}>
+            {error}
+          </p>
+        </section>
+      )}
+
+      {result && (
+        <section
+          style={{
+            marginTop: "22px",
+            border: "1px solid #1e3a5f",
+            background: "rgba(15, 27, 45, 0.78)",
+            borderRadius: "28px",
+            padding: "26px"
+          }}
+        >
+          <p style={{ color: "#60a5fa", fontWeight: 700, marginTop: 0 }}>
+            Agent Result
+          </p>
+
+          <h2 style={{ marginTop: 0 }}>{result.name}</h2>
+
+          <p style={{ color: "#cbd5e1", lineHeight: 1.7 }}>
+            <strong>Summary:</strong> {result.summary}
+          </p>
+
+          <pre
+            style={{
+              whiteSpace: "pre-wrap",
+              overflowX: "auto",
+              border: "1px solid #1e3a5f",
+              borderRadius: "18px",
+              padding: "16px",
+              background: "rgba(2, 6, 23, 0.45)",
+              color: "#dbeafe",
+              lineHeight: 1.6
+            }}
+          >
+            {result.response}
+          </pre>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "16px",
+              marginTop: "18px"
+            }}
+          >
+            <div>
+              <h3>Safety notes</h3>
+              <ul style={{ color: "#cbd5e1", lineHeight: 1.7 }}>
+                {result.safetyNotes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3>Next steps</h3>
+              <ul style={{ color: "#cbd5e1", lineHeight: 1.7 }}>
+                {result.nextSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
     </main>
   );
 }

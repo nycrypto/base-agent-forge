@@ -1,5 +1,5 @@
-import { runLocalAgent } from "@/src/adapters/local-runner";
-import type { AgentId } from "@/src/core/agent-types";
+import { runLocalAgent } from "../src/adapters/local-runner";
+import type { AgentId } from "../src/core/agent-types";
 
 const allowedAgents: AgentId[] = ["wallet", "research", "x402", "privacy"];
 

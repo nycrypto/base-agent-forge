@@ -1,5 +1,5 @@
-import { runAgent } from "@/src/core/agent-engine";
-import type { AgentId, AgentResponse } from "@/src/core/agent-types";
+import { runAgent } from "../core/agent-engine";
+import type { AgentId, AgentResponse } from "../core/agent-types";
 
 export type LocalRunnerInput = {
   agentId: AgentId;

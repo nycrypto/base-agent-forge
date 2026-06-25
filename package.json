@@ -1,0 +1,36 @@
+{
+  "name": "base-agent-forge",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Local-first AI agent starter kit for Base with optional x402 payments.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "agent:local": "tsx scripts/local-agent.ts"
+  },
+  "keywords": [
+    "base",
+    "ai-agent",
+    "x402",
+    "coinbase",
+    "agentkit",
+    "local-first",
+    "privacy"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "next": "16.2.9",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.0.0",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "tsx": "4.20.6",
+    "typescript": "6.0.3"
+  }
+}

@@ -1,12 +1,12 @@
-import { getAgentDefinition } from "@/src/agents/agent-definitions";
+import { getAgentDefinition } from "../agents/agent-definitions";
 import type {
   AgentRequest,
   AgentResponse,
   PaymentMode,
   RunMode
-} from "@/src/core/agent-types";
-import { checkForPrivateData, maskPrivateData } from "@/src/security/pii-filter";
-import { evaluateSafetyPolicy } from "@/src/security/safety-policy";
+} from "./agent-types";
+import { checkForPrivateData, maskPrivateData } from "../security/pii-filter";
+import { evaluateSafetyPolicy } from "../security/safety-policy";
 
 export function runAgent(request: AgentRequest): AgentResponse {
   const mode: RunMode = request.mode ?? "local";
@@ -50,7 +50,8 @@ export function runAgent(request: AgentRequest): AgentResponse {
     };
   }
 
-  const safePrompt = prompt.length > 0 ? maskPrivateData(prompt) : "No prompt provided.";
+  const safePrompt =
+    prompt.length > 0 ? maskPrivateData(prompt) : "No prompt provided.";
 
   return {
     agentId: agent.id,

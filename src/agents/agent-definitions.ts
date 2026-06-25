@@ -5,76 +5,68 @@ export const agentDefinitions: AgentDefinition[] = [
     id: "wallet",
     name: "Base Wallet Agent",
     tagline: "Wallet safety and Base basics",
-    description:
-      "Helps users understand wallet safety, Base network basics, testnet usage, and transaction checklists.",
-    defaultResponse:
-      "I can help you understand safe wallet habits, Base network basics, testnet usage, and transaction checklists. I will never ask for your seed phrase or private key.",
+    description: `Helps users understand wallet safety, Base network basics, testnet usage, and transaction checklists.`,
+    defaultResponse: `I can help you understand safe wallet habits, Base network basics, testnet usage, and transaction checklists. I will never ask for your seed phrase or private key.`,
     safetyNotes: [
-      "Never share your seed phrase.",
-      "Never commit private keys to GitHub.",
-      "Use testnets before working with real funds."
+      `Never share your seed phrase.`,
+      `Never commit private keys to GitHub.`,
+      `Use testnets before working with real funds.`
     ],
     nextSteps: [
-      "Create a wallet safety checklist.",
-      "Learn the difference between mainnet and testnet.",
-      "Review transaction details before signing."
+      `Create a wallet safety checklist.`,
+      `Learn the difference between mainnet and testnet.`,
+      `Review transaction details before signing.`
     ]
   },
   {
     id: "research",
     name: "Base Research Agent",
     tagline: "Base ecosystem research assistant",
-    description:
-      "Helps users explore Base ecosystem ideas, learning paths, builder opportunities, and safe project directions.",
-    defaultResponse:
-      "I can help you explore Base ecosystem ideas, learning paths, builder opportunities, and safe project directions without exposing personal wallet activity.",
+    description: `Helps users explore Base ecosystem ideas, learning paths, builder opportunities, and safe project directions.`,
+    defaultResponse: `I can help you explore Base ecosystem ideas, learning paths, builder opportunities, and safe project directions without exposing personal wallet activity.`,
     safetyNotes: [
-      "Do not publish private wallet history.",
-      "Avoid sharing personal identity data in prompts.",
-      "Use public documentation and mock examples when possible."
+      `Do not publish private wallet history.`,
+      `Avoid sharing personal identity data in prompts.`,
+      `Use public documentation and mock examples when possible.`
     ],
     nextSteps: [
-      "Choose a Base builder topic.",
-      "Create a weekly learning plan.",
-      "Turn research into a small project idea."
+      `Choose a Base builder topic.`,
+      `Create a weekly learning plan.`,
+      `Turn research into a small project idea.`
     ]
   },
   {
     id: "x402",
     name: "x402 Agent",
     tagline: "Payment-ready agent flow",
-    description:
-      "Explains how x402-style paid APIs can work with AI agents and serverless endpoints.",
-    defaultResponse:
-      "I can explain how an AI agent may request access to a paid API or tool using an x402-style payment flow. Real payments are disabled in this starter version.",
+    description: `Explains how x402-style paid APIs can work with AI agents and serverless endpoints.`,
+    defaultResponse: `I can explain how an AI agent may request access to a paid API or tool using an x402-style payment flow. Real payments are disabled in this starter version.`,
     safetyNotes: [
-      "Real payments are disabled by default.",
-      "Do not put payment secrets in public files.",
-      "Review payment metadata before sending anything externally."
+      `Real payments are disabled by default.`,
+      `Do not put payment secrets in public files.`,
+      `Review payment metadata before sending anything externally.`
     ],
     nextSteps: [
-      "Learn the x402 request flow.",
-      "Build a mock paid API endpoint.",
-      "Enable real payments only after testing safely."
+      `Learn the x402 request flow.`,
+      `Build a mock paid API endpoint.`,
+      `Enable real payments only after testing safely.`
     ]
   },
   {
     id: "privacy",
     name: "Privacy Guard Agent",
     tagline: "Prompt and metadata safety checker",
-    description:
-      "Checks prompts, payment descriptions, and agent metadata for possible private information.",
-    defaultResponse:
-      "I can check prompts, payment descriptions, and agent metadata for possible private information before anything is sent to an external service.",
+    description: `Checks prompts, payment descriptions, and agent metadata for possible private information.`,
+    defaultResponse: `I can check prompts, payment descriptions, and agent metadata for possible private information before anything is sent to an external service.`,
     safetyNotes: [
-      "Do not include phone numbers in public prompts.",
-      "Do not include private email addresses in payment metadata.",
-      "Do not include seed phrases, private keys, or secret tokens."
+      `Do not include phone numbers in public prompts.`,
+      `Do not include private email addresses in payment metadata.`,
+      `Do not include seed phrases, private keys, or secret tokens.`
     ],
     nextSteps: [
-      "Scan the prompt for private data.",
-      "Remove sensitive information.",
-      "Use safe placeholder values in demos."
+      `Scan the prompt for private data.`,
+      `Remove sensitive information.`,
+      `Use safe placeholder values in demos.`
     ]
   }
 ];

@@ -27,8 +27,10 @@ export function runAgent(request: AgentRequest): AgentResponse {
       agentId: request.agentId,
       name: "Unknown Agent",
       summary: "Agent not found.",
-      response:
-        "This agent type is not supported yet. Choose wallet, research, x402, or privacy.",
+      response: [
+        "This agent type is not supported yet.",
+        "Choose wallet, research, x402, or privacy."
+      ].join(" "),
       safetyNotes: ["Unsupported agent request was blocked safely."],
       nextSteps: ["Choose a supported agent type."]
     };
@@ -39,8 +41,10 @@ export function runAgent(request: AgentRequest): AgentResponse {
       agentId: agent.id,
       name: agent.name,
       summary: "Request blocked by safety policy.",
-      response:
-        "The agent detected possible private information in your prompt. Remove sensitive data before running this request again.",
+      response: [
+        "The agent detected possible private information in your prompt.",
+        "Remove sensitive data before running this request again."
+      ].join(" "),
       safetyNotes: [...privateDataCheck.warnings, ...safetyPolicy.notes],
       nextSteps: [
         "Remove private data from the prompt.",
@@ -64,7 +68,10 @@ export function runAgent(request: AgentRequest): AgentResponse {
       `Payment mode: ${paymentMode}`,
       `Prompt received: ${safePrompt}`,
       "",
-      "This starter version uses safe demo logic. No real wallet action, real payment, or private key is required."
+      [
+        "This starter version uses safe demo logic.",
+        "No real wallet action, real payment, or private key is required."
+      ].join(" ")
     ].join("\n"),
     safetyNotes: [...agent.safetyNotes, ...safetyPolicy.notes],
     nextSteps: agent.nextSteps

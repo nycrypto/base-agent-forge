@@ -1,9 +1,9 @@
-import { runAgent } from "@/src/core/agent-engine";
+import { runAgent } from "../core/agent-engine";
 import type {
   AgentId,
   AgentResponse,
   PaymentMode
-} from "@/src/core/agent-types";
+} from "../core/agent-types";
 
 export type HostedRunnerInput = {
   agentId: AgentId;

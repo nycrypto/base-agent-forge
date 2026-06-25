@@ -1,22 +1,12 @@
 import { getAgentDefinition } from "../agents/agent-definitions";
-import type {
-  AgentRequest,
-  AgentResponse,
-  PaymentMode,
-  RunMode
-} from "./agent-types";
+import type { AgentRequest, AgentResponse, PaymentMode, RunMode } from "./agent-types";
 import { checkForPrivateData, maskPrivateData } from "../security/pii-filter";
 import { evaluateSafetyPolicy } from "../security/safety-policy";
-
-function text(...parts: string[]): string {
-  return parts.join(" ");
-}
 
 export function runAgent(request: AgentRequest): AgentResponse {
   const mode: RunMode = request.mode ?? "local";
   const paymentMode: PaymentMode = request.paymentMode ?? "disabled";
   const prompt = request.prompt.trim();
-
   const agent = getAgentDefinition(request.agentId);
   const privateDataCheck = checkForPrivateData(prompt);
 
@@ -31,12 +21,9 @@ export function runAgent(request: AgentRequest): AgentResponse {
       agentId: request.agentId,
       name: "Unknown Agent",
       summary: "Agent not found.",
-      response: text(
-        "This agent type is not supported yet.",
-        "Choose wallet, research, x402, or privacy."
-      ),
-      safetyNotes: ["Unsupported agent request was blocked safely."],
-      nextSteps: ["Choose a supported agent type."]
+      response: "Choose a supported agent.",
+      safetyNotes: ["Blocked safely."],
+      nextSteps: ["Use wallet, research, x402, or privacy."]
     };
   }
 
@@ -44,40 +31,32 @@ export function runAgent(request: AgentRequest): AgentResponse {
     return {
       agentId: agent.id,
       name: agent.name,
-      summary: "Request blocked by safety policy.",
-      response: text(
-        "The agent detected possible private information",
-        "in your prompt.",
-        "Remove sensitive data before running this request again."
-      ),
+      summary: "Blocked by safety policy.",
+      response: "Private data may be present.",
       safetyNotes: [...privateDataCheck.warnings, ...safetyPolicy.notes],
       nextSteps: [
-        "Remove private data from the prompt.",
-        "Use placeholder values instead of real secrets.",
-        "Run the agent again after cleaning the input."
+        "Remove private data.",
+        "Use placeholders.",
+        "Run again."
       ]
     };
   }
 
   const safePrompt =
-    prompt.length > 0 ? maskPrivateData(prompt) : "No prompt provided.";
+    prompt.length > 0 ? maskPrivateData(prompt) : "No prompt.";
 
   return {
     agentId: agent.id,
     name: agent.name,
-    summary: `${agent.name} completed a safe ${mode} mode demo run.`,
+    summary: `${agent.name} ran in ${mode} mode.`,
     response: [
       agent.defaultResponse,
       "",
       `Mode: ${mode}`,
       `Payment mode: ${paymentMode}`,
-      `Prompt received: ${safePrompt}`,
+      `Prompt: ${safePrompt}`,
       "",
-      text(
-        "This starter version uses safe demo logic.",
-        "No real wallet action, real payment,",
-        "or private key is required."
-      )
+      "Demo only. No real wallet or payment."
     ].join("\n"),
     safetyNotes: [...agent.safetyNotes, ...safetyPolicy.notes],
     nextSteps: agent.nextSteps

@@ -16,10 +16,7 @@ function isAgentId(value: unknown): value is AgentId {
 }
 
 function isPaymentMode(value: unknown): value is PaymentMode {
-  return (
-    typeof value === "string" &&
-    allowedPaymentModes.includes(value as PaymentMode)
-  );
+  return typeof value === "string" && allowedPaymentModes.includes(value as PaymentMode);
 }
 
 export async function POST(request: Request) {
@@ -27,21 +24,11 @@ export async function POST(request: Request) {
     const body = (await request.json()) as AgentApiBody;
 
     if (!isAgentId(body.agentId)) {
-      return NextResponse.json(
-        {
-          error: "Invalid agentId. Use wallet, research, x402, or privacy."
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Bad agentId." }, { status: 400 });
     }
 
     if (typeof body.prompt !== "string") {
-      return NextResponse.json(
-        {
-          error: "Invalid prompt. Prompt must be a string."
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Bad prompt." }, { status: 400 });
     }
 
     const paymentMode = isPaymentMode(body.paymentMode)
@@ -56,12 +43,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch {
-    return NextResponse.json(
-      {
-        error: "Invalid request body."
-      },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Bad request body." }, { status: 400 });
   }
 }
 
@@ -75,7 +57,7 @@ export async function GET() {
     supportedPaymentModes: allowedPaymentModes,
     example: {
       agentId: "privacy",
-      prompt: "Check this prompt for private data.",
+      prompt: "Check this prompt.",
       paymentMode: "disabled"
     }
   });

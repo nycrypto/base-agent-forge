@@ -1,5 +1,10 @@
 import { getAgentDefinition } from "../agents/agent-definitions";
-import type { AgentRequest, AgentResponse, PaymentMode, RunMode } from "./agent-types";
+import type {
+  AgentRequest,
+  AgentResponse,
+  PaymentMode,
+  RunMode
+} from "./agent-types";
 import { checkForPrivateData, maskPrivateData } from "../security/pii-filter";
 import { evaluateSafetyPolicy } from "../security/safety-policy";
 
@@ -7,6 +12,7 @@ export function runAgent(request: AgentRequest): AgentResponse {
   const mode: RunMode = request.mode ?? "local";
   const paymentMode: PaymentMode = request.paymentMode ?? "disabled";
   const prompt = request.prompt.trim();
+
   const agent = getAgentDefinition(request.agentId);
   const privateDataCheck = checkForPrivateData(prompt);
 
@@ -34,11 +40,7 @@ export function runAgent(request: AgentRequest): AgentResponse {
       summary: "Blocked by safety policy.",
       response: "Private data may be present.",
       safetyNotes: [...privateDataCheck.warnings, ...safetyPolicy.notes],
-      nextSteps: [
-        "Remove private data.",
-        "Use placeholders.",
-        "Run again."
-      ]
+      nextSteps: ["Remove private data.", "Use placeholders.", "Run again."]
     };
   }
 
@@ -56,7 +58,8 @@ export function runAgent(request: AgentRequest): AgentResponse {
       `Payment mode: ${paymentMode}`,
       `Prompt: ${safePrompt}`,
       "",
-      "Demo only. No real wallet or payment."
+      "Demo only.",
+      "No real wallet or payment."
     ].join("\n"),
     safetyNotes: [...agent.safetyNotes, ...safetyPolicy.notes],
     nextSteps: agent.nextSteps
